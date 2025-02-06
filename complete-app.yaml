@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  sentiment-app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/sentiment_db
+    depends_on:
+      - mongo
+    restart: always  # Ensures the app always restarts if it crashes or the Docker daemon restarts
+    networks:
+      - sentiment-network
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - .MongoData/inputs:/data/db
+    restart: always  # Ensures MongoDB is always available
+    networks:
+      - sentiment-network
+
+  mongo-express:
+    image: mongo-express:latest
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+      - ME_CONFIG_MONGODB_SERVER=mongo
+    restart: always  # Ensures Mongo Express always restarts if needed
+    depends_on:
+      - mongo
+    networks:
+      - sentiment-network
+
+volumes:
+  mongo-data:
+    driver: local
+
+networks:
+  sentiment-network:
+    driver: bridge

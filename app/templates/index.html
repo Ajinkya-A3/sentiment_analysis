@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Sentiment Analysis</h1>
+
+        <!-- Form to submit a review -->
+        <form action="/predict" method="POST" id="reviewForm">
+            <textarea name="review" id="review" rows="4" placeholder="Write your review here..."></textarea><br>
+            <button type="submit">Submit Review</button>
+        </form>
+
+        <!-- Display prediction result -->
+        <div id="predictionResult"></div>
+
+        <!-- Display the list of reviews and their sentiments -->
+        <h2>Submitted Reviews</h2>
+        <ul>
+            {% for review in reviews %}
+                <li><strong>{{ review['review'] }}</strong> - <em>{{ review['sentiment'] }}</em></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
