@@ -18,6 +18,7 @@ sentiment_analysis/
 ├── requirements.txt
 ├── Dockerfile
 ├── mongo-setup.yaml  <-- MongoDB setup file for initialization
+├── complete-app.yaml  <-- Complete app setup file 
 ├── .gitignore
 └── .dockerignore
 
