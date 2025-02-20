@@ -40,3 +40,10 @@ README.md
 
 # Ignore .dockerignore file
 .dockerignore
+
+# Ignore .git directory
+.git/
+
+# Ignore yaml files
+*.yaml
+*.yml
