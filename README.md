@@ -2,7 +2,7 @@
 
 
 # Project Directory Structure
-
+```
 sentiment_analysis/
 ├── data/
 │   └── sample_reviews.csv   <-- Your CSV file with review data
@@ -21,6 +21,7 @@ sentiment_analysis/
 ├── complete-app.yaml  <-- Complete app setup file 
 ├── .gitignore
 └── .dockerignore
+```
 
 
 
@@ -47,17 +48,23 @@ Prerequisites
 
 ------------------------------------------------------------------------------------------------------
 
-Docker commands to run the project
+#Docker commands to run the project
 
-# to setup mongodb and mongo-express containers only 
+to setup mongodb and mongo-express containers only
+```
 docker-compose -f mongo-setup.yaml up
+```
 
-# to stop all containers
+to stop all containers
+```
 docker-compose -f mongo-setup.yaml down
+```
 
-
-# to start complete app in docker 
+to start complete app in docker
+```
 docker-compose -f complete-app.yaml up
-
-# to stop all containers
+```
+to stop all containers
+```
 docker-compose -f complete-app.yaml down
+```
