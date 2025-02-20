@@ -1,7 +1,7 @@
 version: '3'
 services:
   my-app:
-    image: at1asflame/hands-on:1.0  # Update with your private repository and version
+    image: at1asflame/hands-on:2.0  # Update with your private repository and version
     restart: always
     ports:
       - 5000:5000
