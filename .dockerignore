@@ -26,6 +26,7 @@ Dockerfile
 # Ignore test or coverage files
 *.coverage
 tests/
+MongoData
 
 # Ignore backup files
 *.bak
@@ -33,3 +34,9 @@ tests/
 
 # Ignore README.md file
 README.md
+
+# Ignore .gitignore file
+.gitignore
+
+# Ignore .dockerignore file
+.dockerignore
