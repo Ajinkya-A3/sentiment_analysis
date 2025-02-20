@@ -2,7 +2,7 @@
 
 
 # Project Directory Structure
-
+```
 sentiment_analysis/
 ├── data/
 │   └── sample_reviews.csv   <-- Your CSV file with review data
@@ -21,6 +21,7 @@ sentiment_analysis/
 ├── complete-app.yaml  <-- Complete app setup file 
 ├── .gitignore
 └── .dockerignore
+```
 
 
 
