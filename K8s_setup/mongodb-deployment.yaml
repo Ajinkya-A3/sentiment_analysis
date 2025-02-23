@@ -30,5 +30,5 @@ spec:
       volumes:
         - name: mongo-storage
       hostPath:
-        path: ./MongoData/inputs  # Path on the host machine
+        path: ../MongoData/inputs  # Path on the host machine
         type: DirectoryOrCreate
