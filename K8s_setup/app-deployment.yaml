@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: flask-container
-        image: at1asflame/flask-app:v1  # Your Docker image
+        image: at1asflame/hands-on:2.0  # Your Docker image
         ports:
         - containerPort: 5000
         env:

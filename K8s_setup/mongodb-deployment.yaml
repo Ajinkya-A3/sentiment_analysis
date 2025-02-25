@@ -24,11 +24,11 @@ spec:
           value: "admin"
         - name: MONGO_INITDB_ROOT_PASSWORD
           value: "password"
-        volumeMounts:
-        - name: mongo-storage
-          mountPath: /data/db
-      volumes:
-        - name: mongo-storage
-      hostPath:
-        path: ../MongoData/inputs  # Path on the host machine
-        type: DirectoryOrCreate
+      #   volumeMounts:
+      #   - name: mongo-storage
+      #     mountPath: /data/db
+      # volumes:
+      #   - name: mongo-storage
+      # hostPath:
+      #   path: ../MongoData/inputs  # Path on the host machine
+      #   type: DirectoryOrCreate
