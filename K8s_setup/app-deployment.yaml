@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: flask-container
-        image: at1asflame/hands-on:6fe7494
+        image: at1asflame/hands-on:c3a1fb4
         ports:
         - containerPort: 5000
         env:
