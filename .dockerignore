@@ -47,3 +47,12 @@ README.md
 # Ignore yaml files
 *.yaml
 *.yml
+
+# Ignore configuration files
+*.conf  
+
+# k8s related files
+K8s_setup/
+
+# Ignore github actions files
+.github/
