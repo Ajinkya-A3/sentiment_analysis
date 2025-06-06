@@ -1,30 +1,34 @@
-# Use the official Python image as a base
-FROM python:3.10-slim
+# Stage 1: Build stage
+FROM python:3.10-slim AS builder
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
-# Copy the requirements file into the container
-COPY requirements.txt /app/
+# Install system dependencies required for building Python packages
+RUN apt-get update && apt-get install -y python3-dev python3-distutils gcc
 
-# Install python3-dev and other necessary packages
-RUN apt-get update && apt-get install -y python3-dev
+# Copy requirements file and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
-# Install distutils
-RUN apt-get update && apt-get install -y python3-distutils
+# Stage 2: Runtime stage
+FROM python:3.10-slim
 
-# Install the dependencies from the requirements.txt file
-RUN pip install --no-cache-dir -r requirements.txt
+# Set the working directory
+WORKDIR /app
 
-# Copy the entire application code into the container
+# Copy only the installed dependencies from the builder stage
+COPY --from=builder /install /usr/local
+
+# Copy the application code
 COPY . /app/
 
-# Expose the port the app runs on (default Flask port)
+# Expose the port
 EXPOSE 5000
 
-# Set the environment variable for Flask
+# Set environment variables
 ENV FLASK_APP=run.py
 ENV FLASK_ENV=development
 
-# Run the Flask app using Flask's built-in server
+# Run the Flask app
 CMD ["flask", "run", "--host=0.0.0.0"]
