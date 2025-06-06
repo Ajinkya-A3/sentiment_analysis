@@ -109,3 +109,31 @@ jobs:
     - name: Push Docker image
       run: |
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE }}:${{ env.SHORT_SHA }}
+
+
+  update-k8s-manifest:
+    runs-on: ubuntu-latest
+    needs: docker-image-push  # Run after the image has been built and pushed
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Set short commit hash
+      id: vars
+      run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+    - name: Update K8s manifest with new image tag
+      run: |
+        sed -i "s|\(image: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE }}:\).*|\1${{ env.SHORT_SHA }}|" K8s_setup/app-deployment.yaml
+
+    - name: Commit and push updated deployment file
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git add K8s_setup/app-deployment.yaml
+        git commit -m "Update K8s image tag to ${{ env.SHORT_SHA }}"
+        git push origin HEAD:${{ github.ref_name }}
+      env:
+        # GITHUB_TOKEN is automatically available, but explicitly passing it is a good practice
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}     
