@@ -65,3 +65,47 @@ jobs:
     - name: Run tests with pytest
       run: |
         PYTHONPATH=$(pwd) pytest tests/
+
+  docker-image-push:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+
+    - name: Set short commit hash
+      id: vars
+      run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build Docker image
+      run: |
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE }}:${{ env.SHORT_SHA }} .
+
+    - name: Install Trivy
+      run: |
+        sudo apt-get install -y wget apt-transport-https gnupg lsb-release
+        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+        echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/trivy.list
+        sudo apt-get update -y
+        sudo apt-get install -y trivy
+
+    - name: Scan Docker image with Trivy
+      run: |
+        trivy image --format table -o trivy-image-scan.txt ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE }}:${{ env.SHORT_SHA }}
+
+    - name: Upload Trivy Docker image scan report
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-image-scan
+        path: trivy-image-scan.txt
+
+    - name: Push Docker image
+      run: |
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE }}:${{ env.SHORT_SHA }}
