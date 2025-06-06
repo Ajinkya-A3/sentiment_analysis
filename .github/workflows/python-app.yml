@@ -33,6 +33,12 @@ jobs:
     - name: Run Gitleaks Scan
       run: gitleaks detect --source . --report-format json --report-path gitleaks-report.json
 
+    - name: Upload Trivy Scan Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-scan-report
+        path: fs-report.json  
+
   test:
     runs-on: ubuntu-latest
     needs: security-check
