@@ -37,7 +37,13 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: trivy-scan-report
-        path: fs-report.json  
+        path: fs-report.json 
+
+    - name: Upload Gitleaks Scan Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: gitleaks-scan-report
+        path: gitleaks-report.json
 
   test:
     runs-on: ubuntu-latest
