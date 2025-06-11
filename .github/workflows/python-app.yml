@@ -31,9 +31,9 @@ jobs:
     - name: Install Gitleaks
       # run: sudo apt install gitleaks -y
       run: |
-        wget -q https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks-linux-amd64 -O gitleaks
-        chmod +x gitleaks
-        sudo mv gitleaks /usr/local/bin/
+        GITLEAKS_VERSION=$(curl -s "https://api.github.com/repos/gitleaks/gitleaks/releases/latest" | grep -Po '"tag_name": "v\K[0-9.]+')
+        sudo tar xf gitleaks.tar.gz -C /usr/local/bin gitleaks
+        rm -rf gitleaks.tar.gz
 
 
     - name: Run Gitleaks Scan
