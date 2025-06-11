@@ -11,7 +11,8 @@ permissions:
 
 jobs:
   security-check:
-    runs-on: ubuntu-latest
+    runs-on: atlas
+    # runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
@@ -46,7 +47,8 @@ jobs:
         path: gitleaks-report.json
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: atlas
+    # runs-on: ubuntu-latest
     needs: security-check
 
     steps:
@@ -73,7 +75,8 @@ jobs:
         PYTHONPATH=$(pwd) pytest tests/
 
   docker-image-push:
-    runs-on: ubuntu-latest
+    runs-on: atlas
+    # runs-on: ubuntu-latest
     needs: test
 
     steps:
@@ -118,7 +121,8 @@ jobs:
 
 
   update-k8s-manifest:
-    runs-on: ubuntu-latest
+    runs-on: atlas
+    # runs-on: ubuntu-latest
     needs: docker-image-push  # Run after the image has been built and pushed
 
     steps:
