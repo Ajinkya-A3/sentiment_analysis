@@ -29,7 +29,12 @@ jobs:
       run: trivy fs --format table -o fs-report.json .
 
     - name: Install Gitleaks
-      run: sudo apt install gitleaks -y
+      # run: sudo apt install gitleaks -y
+      run: |
+        wget -q https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks-linux-amd64 -O gitleaks
+        chmod +x gitleaks
+        sudo mv gitleaks /usr/local/bin/
+
 
     - name: Run Gitleaks Scan
       run: gitleaks detect --source . --report-format json --report-path gitleaks-report.json
