@@ -21,3 +21,18 @@ def predict():
     insert_review(data, prediction)
     
     return jsonify({'sentiment': prediction})
+
+# 🔁 Liveness Probe: Is the app running?
+@app.route('/healthz', methods=['GET'])
+def healthz():
+    return jsonify({'status': 'alive'}), 200
+
+# ✅ Readiness Probe: Is the app ready to serve traffic?
+@app.route('/ready', methods=['GET'])
+def ready():
+    try:
+        # Try to run a simple DB command
+        db.command("ping")
+        return jsonify({'status': 'ready'}), 200
+    except Exception as e:
+        return jsonify({'status': 'not ready', 'reason': str(e)}), 500
