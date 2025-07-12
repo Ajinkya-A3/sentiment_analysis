@@ -1,11 +1,14 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: mongodb
   labels:
     app: mongodb
+  annotations:
+    argocd.argoproj.io/sync-wave: "1" # makes sure to deploy it after all other components if using ArgoCD
 spec:
-  replicas: 1
+  serviceName: "mongodb-headless"  #  Must match the headless service
+  replicas: 3
   selector:
     matchLabels:
       app: mongodb
@@ -19,30 +22,21 @@ spec:
           image: mongo:latest
           ports:
             - containerPort: 27017
+              name: mongo
           env:
             - name: MONGO_INITDB_ROOT_USERNAME
               value: "admin"
             - name: MONGO_INITDB_ROOT_PASSWORD
               value: "password"
-
-          # ✅ Resource requests & limits
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
-
-          # ✅ Liveness Probe (TCP check)
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
           livenessProbe:
             tcpSocket:
               port: 27017
             initialDelaySeconds: 10
             periodSeconds: 10
             failureThreshold: 3
-
-          # ✅ Readiness Probe (checks MongoDB readiness via command)
           readinessProbe:
             exec:
               command:
@@ -52,3 +46,12 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 10
             failureThreshold: 3
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-persistent-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 512Mi
