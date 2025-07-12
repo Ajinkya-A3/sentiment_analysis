@@ -1,6 +1,6 @@
 from flask import render_template, request, jsonify
 from app import app
-from app.db import insert_review, get_reviews
+from app.db import insert_review, get_reviews ,db
 import pickle
 
 # Load the sentiment analysis model
