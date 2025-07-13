@@ -1,18 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flask-app
+  name: flask-app-green
   labels:
     app: flask
+    version: green
 spec:
   replicas: 2  # Runs 2 instances for high availability
   selector:
     matchLabels:
       app: flask
+      version: green
   template:
     metadata:
       labels:
         app: flask
+        version: green
     spec:
       containers:
         - name: flask-container

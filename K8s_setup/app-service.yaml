@@ -5,6 +5,7 @@ metadata:
 spec:
   selector:
     app: flask
+    version: blue  # Changes according to the deployment version
   type: NodePort  # Change to LoadBalancer or ClusterIP based on your setup
   ports:
     - protocol: TCP
