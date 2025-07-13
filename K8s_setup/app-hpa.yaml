@@ -8,7 +8,7 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: flask-app-green
+    name: flask-app-blue
   minReplicas: 2
   maxReplicas: 5
   metrics:
