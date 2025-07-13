@@ -1,0 +1,23 @@
+name: PAT Push Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-git-push:
+    runs-on: ubuntu-latest
+
+    env:
+      GH_PAT: ${{ secrets.GH_PAT }}
+
+    steps:
+      - name: Clone repo using PAT
+        run: |
+          git clone https://github-actions:${GH_PAT}@github.com/${{ github.repository }} repo
+          cd repo
+          echo "Test push at $(date)" >> K8s_setup/test-commit.txt
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add K8s_setup/test-commit.txt
+          git commit -m "✅ PAT test commit"
+          git push https://github-actions:${GH_PAT}@github.com/${{ github.repository }} HEAD:main
