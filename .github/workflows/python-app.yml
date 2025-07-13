@@ -4,17 +4,31 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Target environment (blue or green)"
+        description: "Target environment"
         required: true
         default: "blue"
+        type: choice
+        options:
+          - blue
+          - green
+
       skipBuild:
         description: "Skip Docker image build & push"
         required: true
         default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
       switchTraffic:
         description: "Switch service and HPA to selected environment"
         required: true
         default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
 
 env:
   REGISTRY: docker.io
