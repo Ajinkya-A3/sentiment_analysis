@@ -153,11 +153,17 @@ jobs:
           # Update app-hpa.yaml scaleTargetRef safely
           sed -i "/scaleTargetRef:/,/minReplicas:/ s/name: .*/name: flask-app-${VERSION}/" K8s_setup/app-hpa.yaml
 
-      - name: Commit and push manifest changes
+      - name: Commit and push manifest changes using PAT
+        env:
+          GIT_USERNAME: github-actions
+          GIT_PASSWORD: ${{ secrets.GH_PAT }}
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git remote set-url origin https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}
+          git config user.name "${GIT_USERNAME}"
+          git config user.email "${GIT_USERNAME}@github.com"
+
+          # Set remote with PAT authentication (like Jenkins logic)
+          git remote set-url origin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${{ github.repository }}
+
           git add K8s_setup/
           if git diff --cached --quiet; then
             echo "🟡 No changes to commit."
@@ -165,3 +171,4 @@ jobs:
             git commit -m "🚀 Deploy ${{ inputs.environment }} | Tag: ${{ env.IMAGE_TAG }} | Build: ${{ inputs.skipBuild }} | Traffic: ${{ inputs.switchTraffic }}"
             git push origin HEAD:${{ github.ref_name }}
           fi
+
