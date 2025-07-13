@@ -96,7 +96,7 @@ jobs:
           TAG_PREFIX=$( [[ "$VERSION" == "blue" ]] && echo "blu" || echo "grn" )
           echo "IMAGE_TAG=$TAG_PREFIX-${SHORT_SHA}" >> $GITHUB_ENV
 
-      - name: Install security tools (Trivy & Gitleaks)
+      - name: Install security tools (Trivy )
         run: |
           sudo apt-get update -y/
           wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
