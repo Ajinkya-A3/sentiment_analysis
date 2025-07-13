@@ -161,17 +161,12 @@ jobs:
           git config user.name "${GIT_USERNAME}"
           git config user.email "${GIT_USERNAME}@github.com"
 
-          # Set remote with PAT-based HTTPS URL
-          git remote set-url origin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${{ github.repository }}
-          git remote -v  # ✅ Debug: confirm remote uses PAT
-
           git add K8s_setup/
           if git diff --cached --quiet; then
             echo "🟡 No changes to commit."
           else
             git commit -m "🚀 Deploy ${{ inputs.environment }} | Tag: ${{ env.IMAGE_TAG }} | Build: ${{ inputs.skipBuild }} | Traffic: ${{ inputs.switchTraffic }}"
 
-            # 🔐 Push using PAT-embedded full URL
+            # ✅ Push using PAT in full HTTPS URL (not using 'origin')
             git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${{ github.repository }} HEAD:${{ github.ref_name }}
           fi
-
