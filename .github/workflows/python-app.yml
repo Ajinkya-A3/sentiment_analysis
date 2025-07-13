@@ -158,15 +158,15 @@ jobs:
           GIT_USERNAME: github-actions
           GIT_PASSWORD: ${{ secrets.GH_PAT }}
         run: |
-          git config user.name "${GIT_USERNAME}"
-          git config user.email "${GIT_USERNAME}@github.com"
+            git config user.name "${GIT_USERNAME}"
+            git config user.email "${GIT_USERNAME}@github.com"
 
-          git add K8s_setup/
-          if git diff --cached --quiet; then
-            echo "🟡 No changes to commit."
-          else
-            git commit -m "🚀 Deploy ${{ inputs.environment }} | Tag: ${{ env.IMAGE_TAG }} | Build: ${{ inputs.skipBuild }} | Traffic: ${{ inputs.switchTraffic }}"
+            git add K8s_setup/
+            if git diff --cached --quiet; then
+              echo "🟡 No changes to commit."
+            else
+              git commit -m "🚀 Deploy ${{ inputs.environment }} | Tag: ${{ env.IMAGE_TAG }} | Build: ${{ inputs.skipBuild }} | Traffic: ${{ inputs.switchTraffic }}"
 
-            # ✅ Push using PAT in full HTTPS URL (not using 'origin')
-            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${{ github.repository }} HEAD:${{ github.ref_name }}
-          fi
+              # ✅ Push using full URL with PAT auth (NOT origin)
+              git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${{ github.repository }} HEAD:${{ github.ref_name }}
+            fi
