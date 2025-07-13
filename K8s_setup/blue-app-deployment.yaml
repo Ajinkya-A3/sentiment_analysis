@@ -6,7 +6,7 @@ metadata:
     app: flask
     version: blue
     annotations:
-    argocd.argoproj.io/sync-wave: "2" # makes sure to deploy it after all other components if using ArgoCD
+      argocd.argoproj.io/sync-wave: "2" # makes sure to deploy it after all other components if using ArgoCD
 spec:
   replicas: 2  # Runs 2 instances for high availability
   selector:
