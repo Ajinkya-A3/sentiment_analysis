@@ -98,8 +98,7 @@ jobs:
 
       - name: Install security tools (Trivy & Gitleaks)
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y wget apt-transport-https gnupg lsb-release gitleaks
+          sudo apt-get update -y/
           wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
           echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/trivy.list
           sudo apt-get update -y && sudo apt-get install -y trivy
@@ -140,7 +139,7 @@ jobs:
 
       - name: Update deployment manifest with image tag
         run: |
-          DEPLOYMENT_FILE="${{ inputs.environment }}-app-deployment.yaml"
+          DEPLOYMENT_FILE="K8s_setup/${{ inputs.environment }}-app-deployment.yaml"
           sed -i "s|\(image: .*:\).*|\1$IMAGE_TAG|" $DEPLOYMENT_FILE
 
       - name: Update service and HPA if switchTraffic = true
@@ -149,10 +148,10 @@ jobs:
           VERSION=${{ inputs.environment }}
 
           # Update app-service.yaml selector
-          sed -i "s/version: .*/version: ${VERSION}/" app-service.yaml
+          sed -i "s/version: .*/version: ${VERSION}/" K8s_setup/app-service.yaml
 
           # Update app-hpa.yaml scaleTargetRef safely
-          sed -i "/scaleTargetRef:/,/minReplicas:/ s/name: .*/name: flask-app-${VERSION}/" app-hpa.yaml
+          sed -i "/scaleTargetRef:/,/minReplicas:/ s/name: .*/name: flask-app-${VERSION}/" K8s_setup/app-hpa.yaml
 
       - name: Commit and push manifest changes
         run: |
