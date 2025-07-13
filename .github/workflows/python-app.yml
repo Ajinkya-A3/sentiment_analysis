@@ -155,18 +155,17 @@ jobs:
 
       - name: Commit and push manifest changes using PAT
         env:
-          GIT_USERNAME: github-actions
-          GIT_PASSWORD: ${{ secrets.GH_PAT }}
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
-            git config user.name "${GIT_USERNAME}"
-            git config user.email "${GIT_USERNAME}@github.com"
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
 
-            git add K8s_setup/
-            if git diff --cached --quiet; then
-              echo "🟡 No changes to commit."
-            else
-              git commit -m "🚀 Deploy ${{ inputs.environment }} | Tag: ${{ env.IMAGE_TAG }} | Build: ${{ inputs.skipBuild }} | Traffic: ${{ inputs.switchTraffic }}"
+          git add K8s_setup/
+          if git diff --cached --quiet; then
+            echo "🟡 No changes to commit."
+          else
+            git commit -m "🚀 Deploy ${{ inputs.environment }} | Tag: ${{ env.IMAGE_TAG }} | Build: ${{ inputs.skipBuild }} | Traffic: ${{ inputs.switchTraffic }}"
 
-              # ✅ Push using full URL with PAT auth (NOT origin)
-              git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${{ github.repository }} HEAD:${{ github.ref_name }}
-            fi
+            # ✅ Push using full HTTPS URL with PAT — not 'origin'
+            git push https://github-actions:${GH_PAT}@github.com/${{ github.repository }} HEAD:${{ github.ref_name }}
+          fi
