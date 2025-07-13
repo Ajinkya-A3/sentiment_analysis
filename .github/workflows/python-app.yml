@@ -156,7 +156,17 @@ jobs:
       - name: Commit and push manifest changes
         run: |
           git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add .
-          git commit -m "🚀 Deploy ${{ inputs.environment }} | Build: ${{ inputs.skipBuild == 'false' }} | Traffic: ${{ inputs.switchTraffic }}"
-          git push
+          git config user.email "github-actions@github.com"
+
+          # Add all modified files under K8s_setup/
+          git add K8s_setup/
+
+          # Commit only if there are changes
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m " Deploy ${{ inputs.environment }} | Tag: ${{ env.IMAGE_TAG }} | Build: ${{ inputs.skipBuild }} | Traffic: ${{ inputs.switchTraffic }}"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
