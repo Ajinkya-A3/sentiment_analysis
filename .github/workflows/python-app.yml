@@ -125,47 +125,47 @@ jobs:
         run: docker push $IMAGE_NAME:$IMAGE_TAG
 
   update-manifests:
-  runs-on: ubuntu-latest
-  needs: [test, docker-image-push]
-  if: always()
-  steps:
-    - name: Checkout source using PAT
-      uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GH_PAT }}
+    runs-on: ubuntu-latest
+    needs: [test, docker-image-push]
+    if: always()
+    steps:
+      - name: Checkout source using PAT
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
 
-    - name: Set variables
-      run: |
-        SHORT_SHA=$(git rev-parse --short HEAD)
-        TAG_PREFIX=$( [[ "${{ inputs.environment }}" == "blue" ]] && echo "blu" || echo "grn" )
-        echo "IMAGE_TAG=$TAG_PREFIX-$SHORT_SHA" >> $GITHUB_ENV
+      - name: Set variables
+        run: |
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          TAG_PREFIX=$( [[ "${{ inputs.environment }}" == "blue" ]] && echo "blu" || echo "grn" )
+          echo "IMAGE_TAG=$TAG_PREFIX-$SHORT_SHA" >> $GITHUB_ENV
 
-    - name: Update deployment manifest with image tag (only if build was done)
-      if: ${{ inputs.skipBuild == 'false' }}
-      run: |
-        DEPLOYMENT_FILE="K8s_setup/${{ inputs.environment }}-app-deployment.yaml"
-        sed -i "s|\(image: .*:\).*|\1$IMAGE_TAG|" "$DEPLOYMENT_FILE"
+      - name: Update deployment manifest with image tag (only if build was done)
+        if: ${{ inputs.skipBuild == 'false' }}
+        run: |
+          DEPLOYMENT_FILE="K8s_setup/${{ inputs.environment }}-app-deployment.yaml"
+          sed -i "s|\(image: .*:\).*|\1$IMAGE_TAG|" "$DEPLOYMENT_FILE"
 
-    - name: Update service and HPA if switchTraffic = true
-      if: ${{ inputs.switchTraffic == 'true' }}
-      run: |
-        VERSION=${{ inputs.environment }}
-        # Update app-service.yaml selector
-        sed -i "s/version: .*/version: ${VERSION}/" K8s_setup/app-service.yaml
-        # Update app-hpa.yaml scaleTargetRef safely
-        sed -i "/scaleTargetRef:/,/minReplicas:/ s/name: .*/name: flask-app-${VERSION}/" K8s_setup/app-hpa.yaml
+      - name: Update service and HPA if switchTraffic = true
+        if: ${{ inputs.switchTraffic == 'true' }}
+        run: |
+          VERSION=${{ inputs.environment }}
+          # Update app-service.yaml selector
+          sed -i "s/version: .*/version: ${VERSION}/" K8s_setup/app-service.yaml
+          # Update app-hpa.yaml scaleTargetRef safely
+          sed -i "/scaleTargetRef:/,/minReplicas:/ s/name: .*/name: flask-app-${VERSION}/" K8s_setup/app-hpa.yaml
 
-    - name: Commit and push manifest changes using PAT
-      env:
-        GH_PAT: ${{ secrets.GH_PAT }}
-      run: |
-        git config user.name "github-actions"
-        git config user.email "github-actions@github.com"
+      - name: Commit and push manifest changes using PAT
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
 
-        git add K8s_setup/
-        if git diff --cached --quiet; then
-          echo "No changes to commit."
-        else
-          git commit -m " Deploy ${{ inputs.environment }} | Tag: ${{ env.IMAGE_TAG }} | Build: ${{ inputs.skipBuild == false}} | Traffic Switch: ${{ inputs.switchTraffic }}"
-          git push https://github-actions:${GH_PAT}@github.com/${{ github.repository }} HEAD:${{ github.ref_name }}
-        fi
+          git add K8s_setup/
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m " Deploy ${{ inputs.environment }} | Tag: ${{ env.IMAGE_TAG }} | Build: ${{ inputs.skipBuild == false}} | Traffic Switch: ${{ inputs.switchTraffic }}"
+            git push https://github-actions:${GH_PAT}@github.com/${{ github.repository }} HEAD:${{ github.ref_name }}
+          fi
