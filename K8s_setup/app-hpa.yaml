@@ -1,12 +1,12 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: flask-app-blue
+  name: flask-app-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: flask-app
+    name: flask-app-blue  # Change according to the deployment version
   minReplicas: 2
   maxReplicas: 5
   metrics:
